@@ -40,7 +40,7 @@ class _FriendsPageState extends State<FriendsPage> {
     try {
       final response = await http.get(
         Uri.parse(
-            'http://192.168.56.1:3000/api/friends?username=${widget.username}'),
+            'http://localhost:3000/api/friends?username=${widget.username}'),
       );
 
       if (response.statusCode == 200) {
@@ -64,7 +64,7 @@ class _FriendsPageState extends State<FriendsPage> {
   Future<void> fetchRequests() async {
     final response = await http.get(
       Uri.parse(
-          'http://192.168.56.1:3000/api/requests?username=${widget.username}'),
+          'http://localhost:3000/api/requests?username=${widget.username}'),
     );
 
     if (response.statusCode == 200) {
@@ -101,7 +101,7 @@ class _FriendsPageState extends State<FriendsPage> {
   void _request(
       String fromUsername, String toUsername, String course, String status) {
     http.post(
-      Uri.parse('http://192.168.56.1:3000/api/request'),
+      Uri.parse('http://localhost:3000/api/request'),
       body: json.encode({
         'from': fromUsername,
         'to': toUsername,
