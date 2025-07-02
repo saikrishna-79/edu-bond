@@ -29,7 +29,7 @@ class _MailOtpPageState extends State<MailOtpPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://192.168.56.1:3000/send-otp'), // Replace with your backend URL
+            'http://localhost:3000/send-otp'), // Replace with your backend URL
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -77,7 +77,7 @@ class _MailOtpPageState extends State<MailOtpPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://192.168.56.1:3000/verify-otp'), // Replace with your backend URL
+            'http://localhost:3000/verify-otp'), // Replace with your backend URL
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
