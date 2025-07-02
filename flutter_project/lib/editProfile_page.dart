@@ -41,7 +41,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 // Assuming you need to send a username to fetch the user profile.
   Future<void> fetchUserProfile(String username) async {
     final response = await http.post(
-      Uri.parse('http://192.168.56.1:3000/user-profile'),
+      Uri.parse('http://localhost:3000/user-profile'),
       headers: {
         'Content-Type': 'application/json', // Set content type for JSON
       },
@@ -72,7 +72,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> updateProfile() async {
     final response = await http.post(
-      Uri.parse('http://192.168.56.1:3000/update-profile'),
+      Uri.parse('http://localhost:3000/update-profile'),
       headers: {
         'Content-Type': 'application/json',
       },
