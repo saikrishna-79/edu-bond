@@ -459,7 +459,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         try {
                           final response = await http.post(
                             Uri.parse(
-                                'http://192.168.56.1:3000/api/profile'), // Replace with your actual backend URL
+                                'http://localhost:3000/api/profile'), // Replace with your actual backend URL
                             headers: {
                               'Content-Type': 'application/json',
                             },
