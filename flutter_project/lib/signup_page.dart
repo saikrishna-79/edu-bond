@@ -30,7 +30,7 @@ class _SignupPageState extends State<SignupPage> {
   Future<bool> _checkUsernameExists(String username, String password) async {
     final response = await http.post(
       Uri.parse(
-          'http://192.168.56.1:3000/check-username'), // Update with your backend URL
+          'http://localhost:3000/check-username'), // Update with your backend URL
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
