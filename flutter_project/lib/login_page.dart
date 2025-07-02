@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
       // Send the data to the backend for validation
       final response = await http.post(
         Uri.parse(
-            'http://192.168.56.1:3000/login'), // Change to your backend URL
+            'http://localhost:3000/login'), // Change to your backend URL
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
         // If the server returns an OK response, navigate to HomePage
         final respons = await http.post(
           Uri.parse(
-              'http://192.168.56.1:3000/check_profile'), // Change to your backend URL
+              'http://localhost:3000/check_profile'), // Change to your backend URL
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
