@@ -606,7 +606,7 @@ class _MailOtpDialogState extends State<MailOtpDialog> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.56.1:3000/send-otp'), // Your backend URL
+        Uri.parse('http://localhost:3000/send-otp'), // Your backend URL
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({'email': email}),
       );
@@ -649,7 +649,7 @@ class _MailOtpDialogState extends State<MailOtpDialog> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://192.168.56.1:3000/verify-mailotp'), // Your backend URL
+            'http://localhost:3000/verify-mailotp'), // Your backend URL
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode(
             {'email': email, 'otp': enteredOtp, 'username': widget.username}),
