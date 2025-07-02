@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:async';
+import 'dart:async'; // Import for Timer
 import 'dart:html' as html;
-import 'dart:io' as io;
+import 'dart:io' as io; // For mobile/desktop
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -30,7 +31,7 @@ class FriendBond extends StatefulWidget {
 class _FriendBondState extends State<FriendBond> {
   List<Map<String, dynamic>> _messages = [];
   TextEditingController _messageController = TextEditingController();
-  Timer? _timer;
+  Timer? _timer; // Declare a Timer
 
   Future<void> fetchMessages() async {
     final response = await http.post(
@@ -44,8 +45,10 @@ class _FriendBondState extends State<FriendBond> {
     );
 
     if (response.statusCode == 200) {
+      //print('Response Body: ${response.body}');
       List<dynamic> data = json.decode(response.body);
       setState(() {
+        // Update messages without duplicates
         _messages = data.map((item) {
           return {
             "username": item['username'],
@@ -104,10 +107,13 @@ class _FriendBondState extends State<FriendBond> {
   Future<void> uploadFile(Uint8List bytes, String filename) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/api/send-message'),
+      Uri.parse(
+          'http://localhost:3000/api/send-message'), // Update with your backend upload URL
     );
 
-    request.files.add(http.MultipartFile.fromBytes('file', bytes, filename: filename));
+    // Create a multipart file from the bytes
+    request.files
+        .add(http.MultipartFile.fromBytes('file', bytes, filename: filename));
     request.fields['sender'] = widget.username;
     request.fields['receiver'] = widget.friendUsername;
     request.fields['course'] = widget.course;
@@ -116,7 +122,7 @@ class _FriendBondState extends State<FriendBond> {
 
     if (response.statusCode == 200) {
       print('File uploaded successfully');
-      fetchMessages();
+      fetchMessages(); // Refresh messages after upload
     } else {
       throw Exception('Failed to upload file: ${response.statusCode}');
     }
@@ -126,6 +132,7 @@ class _FriendBondState extends State<FriendBond> {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
+      // Access bytes instead of path
       Uint8List? bytes = result.files.single.bytes;
       String? filename = result.files.single.name;
 
@@ -246,6 +253,7 @@ class _FriendBondState extends State<FriendBond> {
                                       onPressed: () => downloadFile(
                                           file['filePath'], file['filename']),
                                       style: TextButton.styleFrom(
+                                        //primary: Colors.white,
                                         backgroundColor:
                                             Colors.white.withOpacity(0.1),
                                         padding: EdgeInsets.symmetric(
@@ -267,6 +275,7 @@ class _FriendBondState extends State<FriendBond> {
                                       onPressed: () =>
                                           viewFile(file['filename']),
                                       style: TextButton.styleFrom(
+                                        //primary: Colors.white,
                                         backgroundColor:
                                             Colors.white.withOpacity(0.1),
                                         padding: EdgeInsets.symmetric(
@@ -287,7 +296,7 @@ class _FriendBondState extends State<FriendBond> {
                       Padding(
                         padding: EdgeInsets.only(top: 4),
                         child: Text(
-                          ' ',
+                          ' ', // You might want to replace this with actual message timestamp
                           style: TextStyle(
                             color: Colors.grey[400],
                             fontSize: 12,
@@ -316,7 +325,11 @@ class _FriendBondState extends State<FriendBond> {
                 SizedBox(width: 8),
                 Expanded(
                   child: Focus(
-                    onFocusChange: (hasFocus) {},
+                    onFocusChange: (hasFocus) {
+                      if (hasFocus) {
+                        // Add any additional logic if needed when focus is gained
+                      }
+                    },
                     child: TextField(
                       controller: _messageController,
                       style: TextStyle(color: Colors.white),
@@ -359,27 +372,45 @@ class _FriendBondState extends State<FriendBond> {
   }
 
   Future<void> downloadFile(String filePath, String filename) async {
+    // Replace 'http://localhost:3000/api/download' with your backend URL
     String url = 'http://localhost:3000/api/download/$filename';
 
     try {
       if (kIsWeb) {
+        // Web implementation for downloading files
+        print('Downloading file for web...');
         final anchor = html.AnchorElement(href: url);
         anchor.setAttribute('download', filename);
         anchor.click();
+        print('File download initiated for web: $filename');
       } else {
+        // Mobile/Desktop implementation
         final response = await http.get(Uri.parse(url));
+
+        // Check the response status
         if (response.statusCode == 200) {
+          // Log content type for debugging
+          print('Content-Type: ${response.headers['content-type']}');
+
+          // Get the temporary directory for saving the file
           final directory = await getExternalStorageDirectory();
+
           if (directory != null) {
             String path = '${directory.path}/$filename';
             io.File file = io.File(path);
+
+            // Write the bytes to the file
             await file.writeAsBytes(response.bodyBytes);
+
+            // Check if the file was written correctly
+            print('File saved to: $path');
           } else {
             print('Failed to get the directory for saving the file.');
           }
         } else {
           print('Failed to download file: ${response.statusCode}');
-          throw Exception('Failed to download file');
+          print('Response Body: ${response.body}');
+          throw Exception('Failed to download file: ${response.statusCode}');
         }
       }
     } catch (e) {
@@ -388,11 +419,15 @@ class _FriendBondState extends State<FriendBond> {
   }
 
   Future<void> viewFile(String filename) async {
-    final url = 'http://localhost:3000/api/view/$filename';
+    print('viewing file: $filename'); // Added print statement
+    final url =
+        'http://localhost:3000/api/view/$filename'; // Correct URL construction
+
+    // Open the URL in the web browser
     if (kIsWeb) {
-      html.window.open(url, '_blank');
+      html.window.open(url, '_blank'); // Open in a new tab for web
     } else {
-      Uri uri = Uri.parse(url);
+      Uri uri = Uri.parse(url); // Convert the string URL to a Uri object
       if (await canLaunch(uri.toString())) {
         await launch(uri.toString());
       } else {
@@ -401,4 +436,3 @@ class _FriendBondState extends State<FriendBond> {
     }
   }
 }
-s
